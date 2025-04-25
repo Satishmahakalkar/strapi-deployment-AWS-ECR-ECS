@@ -129,3 +129,36 @@ dist
 build
 .strapi-updater.json
 .strapi-cloud.json
+
+
+
+# Terraform state files
+*.tfstate
+*.tfstate.backup
+ 
+# Crash log
+crash.log
+ 
+# Local Terraform variable overrides
+*.tfvars
+*.tfvars.json
+ 
+# Sensitive SSH keys or credentials
+*.pem
+*.key
+ 
+# Terraform plan output
+*.tfplan
+ 
+# .terraform directory
+.terraform/
+ 
+# Terraform lock file (optional if you want deterministic builds)
+.terraform.lock.hcl
+ 
+# Editor/OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.info
