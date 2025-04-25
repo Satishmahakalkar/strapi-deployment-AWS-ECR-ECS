@@ -22,7 +22,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Initialize Terraform
         run: |
@@ -34,7 +34,9 @@ jobs:
           cd terraform5
           terraform plan \
             -var "image_uri=${{ secrets.ECR_REPOSITORY_URI }}" \
-            -var "region=${{ secrets.AWS_REGION }}"
+            -var "region=${{ secrets.AWS_REGION }}" \
+            -var "subnet_ids=${{ secrets.SUBNET_IDS }}" \
+            -var "vpc_id=${{ secrets.VPC_ID }}"
 
       - name: Apply Terraform Configuration
         run: |
@@ -42,4 +44,6 @@ jobs:
           terraform apply \
             -var "image_uri=${{ secrets.ECR_REPOSITORY_URI }}" \
             -var "region=${{ secrets.AWS_REGION }}" \
+            -var "subnet_ids=${{ secrets.SUBNET_IDS }}" \
+            -var "vpc_id=${{ secrets.VPC_ID }}" \
             --auto-approve
