@@ -1,61 +1,118 @@
-# 🚀 Getting started with Strapi
+# 🚀 Strapi Deployment on AWS ECS Fargate with Terraform & GitHub Actions CI/CD
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
 
-### `develop`
+This project automates the deployment of a Strapi application to **Amazon ECS Fargate** using **Terraform** for infrastructure provisioning and **GitHub Actions** for CI/CD. Docker images are built and pushed to **Amazon ECR**, and the ECS service is updated accordingly.
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
 
-```
-npm run develop
-# or
-yarn develop
-```
+🎥 **Demo Video (Loom)**:  
 
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
-
-```
-npm run start
-# or
-yarn start
-```
-
-### `build`
-
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
-
-```
-npm run build
-# or
-yarn build
-```
-
-## ⚙️ Deployment
-
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
-
-```
-yarn strapi deploy
-```
-
-## 📚 Learn more
-
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
-
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
 
 ---
 
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+## 📁 Project Structure
+root@ip-172-31-2-115:~# tree -L 2
+.
+├── aws
+│   ├── README.md
+│   ├── THIRD_PARTY_LICENSES
+│   ├── dist
+│   └── install
+├── aws-fargate-cicd-setup
+│   ├── Dockerfile
+│   ├── README.md
+│   └── terraform
+
+.
+├── Dockerfile
+├── README.md
+└── terraform
+    ├── alb.tf
+    ├── ecs.tf
+    ├── iam.tf
+    ├── main.tf
+    ├── outputs.tf
+    ├── providers.tf
+    ├── terraform.tfstate
+    ├── terraform.tfstate.1745230050.backup
+    ├── terraform.tfstate.backup
+    └── variables.tf
+## ⚙️ Prerequisites
+
+- AWS Account
+- ECR Repository (e.g., `strapi-app`)
+- IAM Role for ECS Tasks (e.g., `ecsTaskExecutionRole`)
+- GitHub Repository Secrets configured:
+  - `AWS_ACCESS_KEY_ID`
+  - `AWS_SECRET_ACCESS_KEY`
+  - `AWS_REGION` (e.g., `us-east-1`)
+  - `ECR_REPO` (e.g., `strapi-app`)
+
+---
+
+## 🚀 How It Works
+
+### ✅ GitHub Actions Workflow
+
+1. **Triggers on Push to `main` branch**
+2. **Authenticates with AWS**
+3. **Pulls latest Docker image**
+4. **Pushes Docker image to ECR**
+5. **Initializes Terraform**
+6. **Applies Infrastructure changes using Terraform**
+
+### 📦 Docker Image
+
+Make sure your Docker image is already built and pushed to ECR or modify the workflow to build from local.
+
+---
+
+## 🌐 Terraform Variables (Example)
+
+Update the `Terraform Apply` step in `.github/workflows/ci-cd.yml` with these:
+
+```yaml
+terraform apply -auto-approve \
+  -var="vpc_id=vpc-xxxxxxxx" \
+  -var='subnet_ids=["subnet-xxxx", "subnet-yyyy"]' \
+  -var="ecr_image=118273046134.dkr.ecr.us-east-1.amazonaws.com/${{ secrets.ECR_REPO }}:latest" \
+  -var="execution_role_arn=arn:aws:iam::123456789012:role/ecsTaskExecutionRole"
+
+
+🧰 Setup Instructions
+1. Clone the Repo
+bash
+Copy
+Edit
+git clone https://github.com/shashibabu123/aws-fargate-cicd-setup.git
+cd aws-fargate-cicd-setup
+2. Add GitHub Secrets
+Repository → Settings → Secrets and variables → Actions:
+
+AWS_ACCESS_KEY_ID
+
+AWS_SECRET_ACCESS_KEY
+
+AWS_REGION
+
+ECR_REPO
+
+3. Push to Deploy 🚀
+
+git add .
+git commit -m "initial commit for ECS Fargate CI/CD"
+git push origin main
+🧹 Clean Up
+To destroy infrastructure:
+
+
+cd terraform
+terraform destroy -auto-approve
+📺 Demo
+🎥 Loom Walkthrough Video
+👉 Watch Demo
+
+
+
+🙌 Author
+Made with ❤️ by Shashikumar
+Intern @ PearlThoughts 🚀
